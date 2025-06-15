@@ -1,0 +1,14 @@
+# Basisimage
+FROM python:3.11-slim
+
+# Arbeitsverzeichnis erstellen
+WORKDIR /app
+
+RUN pip install paho-mqtt
+
+# Client-Code in den Container kopieren 
+COPY gateway.py .
+
+# Client ausführen
+# Führt gateway.py im Container python aus
+CMD ["python", "gateway.py"]

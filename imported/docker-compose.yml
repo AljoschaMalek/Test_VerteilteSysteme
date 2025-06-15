@@ -1,0 +1,53 @@
+services: 
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - vs_net
+
+  client:
+    build: ./client
+    networks:
+      - vs_net
+
+  rpc_db:
+    build: ./rpc_db
+    networks:
+      - vs_net
+
+  mqtt_broker:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - vs_net
+
+  sensor1:
+    build: ./sensors
+    environment:
+      - SENSOR_ID=sensor1
+      - SENSOR_TYPE=temperature
+    depends_on:
+      - mqtt_broker
+    networks:
+      - vs_net
+
+  sensor2:
+    build: ./sensors
+    environment:
+      - SENSOR_ID=sensor2
+      - SENSOR_TYPE=humidity
+    depends_on:
+      - mqtt_broker
+    networks:
+      - vs_net
+
+networks:
+  vs_net:
+    driver: bridge

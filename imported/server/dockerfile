@@ -1,0 +1,20 @@
+# Basisimage mit Python 3.11
+FROM python:3.11-slim
+
+# Arbeitsverzeichnis im Container setzen
+WORKDIR /app
+
+# Thrift-Modul für RPC-Unterstützung installieren
+RUN pip install thrift
+
+# Kopiere alle Python-Dateien aus server/
+COPY server/*.py .
+
+# Kopiere generierten Thrift-Code aus rpc_db/gen-py
+COPY rpc_db/gen-py ./gen-py
+
+# Kopiere Testskript aus test/
+COPY test/rpc_test.py .
+
+# Startbefehl für Standardbetrieb
+CMD ["python", "-u", "http_server.py"]
